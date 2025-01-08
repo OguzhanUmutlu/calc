@@ -24,7 +24,7 @@ endButton.textContent = lang === "tr" ? "Bitir" : "End";
 continueBtn.textContent = lang === "tr" ? "Devam" : "Continue";
 q(".toggle-wrong-skip > span").textContent = lang === "tr" ? "Soruları Otomatik Geç" : "Auto Skip Incorrect Questions";
 localStorage.setItem("calc#lang", lang);
-const skipWrong = toggleWrongSkip.checked = (localStorage.getItem("calc#toggleWrongSkip") || "true") === "true";
+let skipWrong = toggleWrongSkip.checked = (localStorage.getItem("calc#toggleWrongSkip") || "true") === "true";
 updateHighScore();
 
 const trigIdentities = {
@@ -335,7 +335,7 @@ endButton.addEventListener("click", () => {
 });
 
 toggleWrongSkip.addEventListener("change", () => {
-    localStorage.setItem("calc#toggleWrongSkip", toggleWrongSkip.checked);
+    localStorage.setItem("calc#toggleWrongSkip", skipWrong = toggleWrongSkip.checked);
 });
 
 continueBtn.addEventListener("click", () => {
