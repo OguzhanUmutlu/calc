@@ -22,7 +22,7 @@ body {
     user-select: none;
 }
 
-.header {
+.header, .footer {
     padding: 20px 20px;
     width: calc(100% - 40px);
     height: max-content;
@@ -30,6 +30,12 @@ body {
     align-items: center;
     justify-content: space-between;
     z-index: 2;
+}
+
+.footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
 }
 
 .points {
@@ -44,15 +50,25 @@ body {
     flex: 0 0 auto;
 }
 
-.end-button {
-    color: white;
-    background: #ff3737;
+.btn {
+    background: #484848;
     padding: 5px 25px;
     border-radius: 6px;
     cursor: pointer;
     user-select: none;
-    scale: 0;
     transition: 0.5s;
+}
+
+.end-button {
+    scale: 0;
+    color: white;
+    background: #ff3737;
+}
+
+.continue-button {
+    scale: 0;
+    color: white;
+    background: #0092d5;
 }
 
 .time-bar {
@@ -183,4 +199,13 @@ body {
 
 .red {
     color: #ff5c5c;
+}
+
+.toggle-wrong-skip {
+    transition: 0.5s;
+}
+
+input {
+    outline: none;
+    scale: 1.5;
 }

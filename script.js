@@ -10,6 +10,8 @@ const pointsText = q(".points");
 const highScoreText = q(".high-score");
 const pointDifference = q(".point-difference");
 const endButton = q(".end-button");
+const toggleWrongSkip = q(".toggle-wrong-skip > input");
+const continueBtn = q(".continue-button");
 let optionNames;
 let correctOption;
 const timeouts = [];
@@ -19,7 +21,10 @@ const lang = localStorage.getItem("calc#lang") || (navigator.language.includes("
 document.title = lang === "tr" ? "Kalkülüs Hızlı Test" : "Quick Calculus Test";
 pressToStart.textContent = lang === "tr" ? "Başlamak için tıkla" : "Click to start";
 endButton.textContent = lang === "tr" ? "Bitir" : "End";
+continueBtn.textContent = lang === "tr" ? "Devam" : "Continue";
+q(".toggle-wrong-skip > span").textContent = lang === "tr" ? "Soruları Otomatik Geç" : "Auto Skip Incorrect Questions";
 localStorage.setItem("calc#lang", lang);
+const skipWrong = toggleWrongSkip.checked = (localStorage.getItem("calc#toggleWrongSkip") || "true") === "true";
 updateHighScore();
 
 const trigIdentities = {
@@ -227,6 +232,19 @@ function isMobileViewport() {
     return innerWidth <= 768;
 }
 
+function questionOver(correct) {
+    correctOption.classList.add("correct");
+    over = true;
+    clearTimeouts();
+    timeBar.style.animationPlayState = "paused";
+    if (correct) {
+        newQuestion();
+    } else {
+        if (skipWrong) setSafeTimeout(newQuestion, 500);
+        else continueBtn.style.scale = "1";
+    }
+}
+
 function makeOptionDiv(option, index, answer, time) {
     const startTime = Date.now();
     const optionElement = document.createElement("div");
@@ -244,24 +262,24 @@ function makeOptionDiv(option, index, answer, time) {
     optionNames.push(optionName);
 
     optionElement.addEventListener("click", () => {
-        if (over) return;
-        over = true;
-        clearTimeouts();
         const classes = optionName.classList;
         if (classes.contains("wrong") || classes.contains("correct")) return;
+
+        if (over) return;
+
         classes.add("wrong");
-        correctOption.classList.add("correct");
+
         if (option === answer) {
             addPoints(10 + (time - (Date.now() - startTime) / 1000));
-            newQuestion();
-        } else {
-            addPoints(-10);
-            setSafeTimeout(newQuestion, 2000);
         }
+
+        questionOver(option === answer);
     });
 }
 
 function showQuestion({question, answer, options}) {
+    continueBtn.style.scale = "0";
+    timeBar.style.animationPlayState = "running";
     clearTimeouts();
 
     over = false;
@@ -290,10 +308,7 @@ function showQuestion({question, answer, options}) {
         }
 
         addPoints(-2);
-        pointsText.textContent = Math.floor(points).toString();
-        correctOption.classList.add("correct");
-        over = true;
-        setSafeTimeout(newQuestion, 2000);
+        questionOver(false);
     }, time * 1000);
 }
 
@@ -302,6 +317,7 @@ pressToStart.addEventListener("click", () => {
     pressToStart.style.scale = "0";
     endButton.style.scale = "1";
     pointsText.style.scale = "1";
+    q(".toggle-wrong-skip").style.scale = "0";
     newQuestion();
 });
 
@@ -314,4 +330,15 @@ endButton.addEventListener("click", () => {
     pressToStart.style.scale = "1";
     endButton.style.scale = "0";
     pointsText.style.scale = "0";
+    continueBtn.style.scale = "0";
+    q(".toggle-wrong-skip").style.scale = "1";
+});
+
+toggleWrongSkip.addEventListener("change", () => {
+    localStorage.setItem("calc#toggleWrongSkip", toggleWrongSkip.checked);
+});
+
+continueBtn.addEventListener("click", () => {
+    continueBtn.style.scale = "0";
+    newQuestion();
 });
