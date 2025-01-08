@@ -15,10 +15,11 @@ let correctOption;
 const timeouts = [];
 let over = false;
 let points = 0;
-let lang = navigator.languages.some(i => i.includes("tr")) ? "tr" : "en";
+const lang = localStorage.getItem("calc#lang") || (navigator.language.includes("tr") ? "tr" : "en");
 document.title = lang === "tr" ? "Kalkülüs Hızlı Test" : "Quick Calculus Test";
 pressToStart.textContent = lang === "tr" ? "Başlamak için tıkla" : "Click to start";
 endButton.textContent = lang === "tr" ? "Bitir" : "End";
+localStorage.setItem("calc#lang", lang);
 updateHighScore();
 
 const trigIdentities = {
